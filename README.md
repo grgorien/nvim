@@ -1,4 +1,4 @@
-# Neovim configurations for Fedorah 40
+# Neovim configurations for Fedora 40
 
 ## After installing neovim e.g (sudo dnf install neovim)
 - Add this repo to your .config or related directory.
