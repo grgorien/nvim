@@ -7,10 +7,10 @@
 ```bash
 sudo dnf install neovim
 ```
-## After installing neovim e.g (sudo dnf install neovim)
-- Add this repo to your .config or related directory.
-
-`git clone https://github.com/williamgregorio/nvim.git@fed-40-w`
+### Clone the repository
+```bash
+git clone https://github.com/williamgregorio/nvim.git ~/.config/
+```
 
 ## Open nvim
 - Lazy should do the work.
