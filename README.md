@@ -1,5 +1,12 @@
-# Neovim configurations for Fedorah 40
+# Neovim and TMUX configurations for Fedora 40\Debian\macOS
 
+## Getting started 
+
+### Prerequisites
+1. **install Neovim**:
+```bash
+sudo dnf install neovim
+```
 ## After installing neovim e.g (sudo dnf install neovim)
 - Add this repo to your .config or related directory.
 
