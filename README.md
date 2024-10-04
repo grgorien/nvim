@@ -8,6 +8,7 @@
 sudo dnf install neovim
 ```
 ### Clone the repository
+1. **git clone:**
 ```bash
 git clone https://github.com/williamgregorio/nvim.git ~/.config/
 ```
