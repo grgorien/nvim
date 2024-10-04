@@ -12,23 +12,34 @@ sudo dnf install neovim
 sudo dnf install tmux
 ```
 
-### Clone the repository
+### Clone this repository
 1. **git clone:**
 ```bash
 git clone https://github.com/williamgregorio/nvim.git ~/.config/
 ```
 
-## Open nvim
-- Lazy should do the work.
+### Clone the Tmux Plugin Manager (TPM) repository
+1. **add this to your $HOME**:
+```bash
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm ~/
+```
+2. **Link the TMUX configuration file**:
+```bash
+ln -s ~/.config/nvim/.tmux.conf ~/.tmux.conf
+```
 
-## Then install tmux
-- e.g (sudo dnf install tmux).
-
-## Source .tmux.conf
-- Open tmux e.g (tmux new -s conf) 
-- Source by (Ctrl + b) + : -> enter [`source-file ~/.config/nvim/.tmux.conf`] OR replc `source-file` FOR `source`.
-
-## git clone tpm on ~/ OR $HOME
+### Source the .tmux.conf file
+1. **Open Tmux** (e.g. `tmux new -s conf`)
+2. **Source the configuration**:
+- Press `Ctrl + b`, then `:` to enter command mode, and type:
+```bash
+source-file ~/.tmux.conf
+```
+`OR`
+```bash
+source ~/.tmux.conf
+```
+## Clone the Tmux Plugin Manager (TPM) repository
 - git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
 ## Change _get_user_tmux_conf() -> default_location from helpers directory to new directory
