@@ -7,6 +7,11 @@
 ```bash
 sudo dnf install neovim
 ```
+2. **install tmux**:
+```bash
+sudo dnf install tmux
+```
+
 ### Clone the repository
 1. **git clone:**
 ```bash
