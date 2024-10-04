@@ -27,7 +27,6 @@ git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm ~/
 ```bash
 ln -s ~/.config/nvim/.tmux.conf ~/.tmux.conf
 ```
-
 ### Source the .tmux.conf file
 1. **Open Tmux** (e.g. `tmux new -s conf`)
 2. **Source the configuration**:
@@ -39,13 +38,8 @@ source-file ~/.tmux.conf
 ```bash
 source ~/.tmux.conf
 ```
-## Clone the Tmux Plugin Manager (TPM) repository
-- git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-
-## Change _get_user_tmux_conf() -> default_location from helpers directory to new directory
-- default_location="$HOME/`.config/nvim/`.tmux.conf"
-
-## Apply new installation on tpm
-- (Ctrl + a) + Shift + I = Install
+### Confirm the installation of TPM
+1. **install plugins with TPM,** press:
+- `Ctrl + a`, then `Shift + I` (this is my preffered binding; adjust freely.)
 
 ### Now enjoy
