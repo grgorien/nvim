@@ -36,15 +36,21 @@ require("lazy").setup({
     dependencies = { "nvim-lua/plenary.nvim" }
   },
   {
-    "epwalsh/obsidian.nvim", version = "*", ft = "markdown",
+    "epwalsh/obsidian.nvim", version = "*",
+    lazy = true,
+    ft = "markdown",
     dependencies = {"nvim-lua/plenary.nvim"},
     opts = {
-      workspaces= {
+      workspaces = {
         {
-          name= "work",
-          path= "~/vaults/work",
-        }
-      }
-    }
+          name = "personal",
+          path = "~/personal",
+        },
+        {
+          name = "work",
+          path = "~/work",
+        },
+      },
+    },
   },
 })
