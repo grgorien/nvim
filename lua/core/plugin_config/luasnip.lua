@@ -9,25 +9,10 @@ require("luasnip.config").setup({
   history = true,
   updateevents = "TextChanged,TextChangedI",
   enable_autosnippets = true,
-  -- Add more config options if needed
   require("luasnip.loaders.from_vscode").lazy_load({paths = { vim.fn.stdpath("config") .. "/snippets/nvim-mjml" },})
 })
 
 vim.cmd('autocmd BufRead,BufNewFile *.mjml setfiletype mjml')
-
-ls.add_snippets("lua", {
-  s("test", fmt(
-    [[
-    hello im {}
-    ]], {i(1)}
-  ))
-})
-
-ls.add_snippets("mjml", {
-  s("test", fmt([[ 
-    hello mjml im {}
-    ]], {i(1)}))
-})
 
 vim.keymap.set({"i","s"}, "<Tab>", function()
   if ls.expand_or_jumpable() then

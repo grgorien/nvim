@@ -1,11 +1,23 @@
 require("catppuccin").setup({
-  flavour = "mocha",
-  transparent_background = true,
-  styles = { -- Handles the styles of general hi groups (see `:h highlight-args`):
-    comments = { "italic" }, -- Change the style of comments
+  flavour = "auto",
+  priority = 1000,
+  background = {
+    light = "latte",
+    dark = "mocha",
   },
+  transparent_background = false,
+  show_end_of_buffer = false,
+  term_colors = false,
+  no_italic = false,
+  no_bold = false,
+  no_underline = false,
+  styles = {
+    comments = { "italic" },
+    conditionals = { "italic" },
+  },
+  default_integrations = true,
 })
 
 vim.o.termguicolors = true
 vim.o.background = "dark"
-vim.cmd[[colorscheme catppuccin]]
+vim.cmd.colorscheme "catppuccin"

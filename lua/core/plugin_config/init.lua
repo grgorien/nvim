@@ -11,5 +11,4 @@ require("core.plugin_config.gitsigns")
 require("core.plugin_config.copilot")
 require("core.plugin_config.oil")
 require("core.plugin_config.markdown_preview")
-
-
+require("core.plugin_config.obsidian")

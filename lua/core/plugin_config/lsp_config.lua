@@ -1,5 +1,5 @@
 require("mason-lspconfig").setup({
-  ensure_installed = { "lua_ls", "tsserver", "phpactor", "eslint", "golangci_lint_ls" }
+  ensure_installed = { "lua_ls", "ts_ls", "phpactor", "eslint", "golangci_lint_ls" }
 })
 
 local lspconfig = require('lspconfig')
@@ -28,7 +28,6 @@ require("lspconfig").lua_ls.setup {
   }
 }
 
-require("lspconfig").tsserver.setup({})
 require("lspconfig").phpactor.setup({})
 
 vim.api.nvim_create_autocmd('LspAttach', {

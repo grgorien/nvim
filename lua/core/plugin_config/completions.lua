@@ -1,5 +1,5 @@
 local cmp = require("cmp")
-local ls = require "luasnip"
+local ls = require("luasnip")
 
 cmp.setup({
   mapping = cmp.mapping.preset.insert({
