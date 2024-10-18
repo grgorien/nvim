@@ -17,5 +17,5 @@ vim.opt.expandtab = true
 vim.cmd [[ set noswapfile ]]
 vim.cmd [[ set termguicolors ]]
 
---Line numbers
+-- line numbers
 vim.wo.number = true
