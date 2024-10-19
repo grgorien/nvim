@@ -1,5 +1,4 @@
 require("obsidian").setup({
-  {
   -- A list of workspace names, paths, and configuration overrides.
   -- If you use the Obsidian app, the 'path' of a workspace should generally be
   -- your vault root (where the `.obsidian` folder is located).
@@ -7,11 +6,7 @@ require("obsidian").setup({
   -- the workspace to the first workspace in the list whose `path` is a parent of the
   -- current markdown file being edited.
   workspaces = {
-    {
-      name = "personal",
-      path = "~/personal",
-    },
-    {
+     {
       name = "work",
       path = "~/work",
       -- Optional, override certain settings.
@@ -322,6 +317,5 @@ require("obsidian").setup({
       path = client:vault_relative_path(path) or path
       return string.format("![%s](%s)", path.name, path)
     end,
-  },
-}
+  }
 })
