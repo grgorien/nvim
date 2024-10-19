@@ -19,3 +19,5 @@ vim.cmd [[ set termguicolors ]]
 
 -- line numbers
 vim.wo.number = true
+
+vim.opt.conceallevel = 1
