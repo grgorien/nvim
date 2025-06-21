@@ -23,3 +23,5 @@ vim.keymap.set("n", "<A-k>", ":m .-2<CR>==", { desc = "Moves line up", silent = 
 
 vim.keymap.set("v", "<A-j>", ":m '>+1<CR>gv=gv", { desc = "Moves block down", silent = true })
 vim.keymap.set("v", "<A-k>", ":m '<-2<CR>gv=gv", { desc = "Moves block up", silent = true })
+
+vim.keymap.set("n", "<leader>gg", "<cmd>Neogit<CR>", { desc = "Opens Neogit "})
