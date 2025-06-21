@@ -16,3 +16,10 @@ vim.keymap.set('n', '<c-k>', ':wincmd k<CR>')
 vim.keymap.set('n', '<c-j>', ':wincmd j<CR>')
 vim.keymap.set('n', '<c-h>', ':wincmd h<CR>')
 vim.keymap.set('n', '<c-l>', ':wincmd l<CR>')
+
+
+vim.keymap.set("n", "<A-j>", ":m .+1<CR>==", { desc = "Moves line down", silent = true })
+vim.keymap.set("n", "<A-k>", ":m .-2<CR>==", { desc = "Moves line up", silent = true })
+
+vim.keymap.set("v", "<A-j>", ":m '>+1<CR>gv=gv", { desc = "Moves block down", silent = true })
+vim.keymap.set("v", "<A-k>", ":m '<-2<CR>gv=gv", { desc = "Moves block up", silent = true })
