@@ -6,7 +6,13 @@ return {
       "sindrets/diffview.nvim",
 
       "nvim-telescope/telescope.nvim"
-    }
+    },
+    cmd = "Neogit",
+    config = function()
+      require("neogit").setup({
+        kind = "split",
+      })
+    end,
   },
   {
     "lewis6991/gitsigns.nvim",
