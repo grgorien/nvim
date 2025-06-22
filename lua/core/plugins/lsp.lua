@@ -47,6 +47,9 @@ return {
           "vue"
         },
       }
+      lspconfig.ccls.setup{
+        filetypes = { "c", "cpp" }
+      }
       lspconfig.pyright.setup{
         capabilities = capabilities,
       }
