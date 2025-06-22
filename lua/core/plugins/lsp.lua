@@ -47,10 +47,6 @@ return {
           "vue"
         },
       }
-      lspconfig.vue_ls.setup{
-        capabilities = capabilities,
-        filetypes = { "vue" }
-      }
       lspconfig.pyright.setup{
         capabilities = capabilities,
       }
