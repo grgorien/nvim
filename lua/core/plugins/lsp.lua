@@ -54,9 +54,7 @@ return {
         capabilities = capabilities,
       }
       lspconfig.phpactor.setup{
-        filetypes = { 'php' },
-        root_markers = { 'composer.json', '.git', '.phpactor.json', '.phpactor.yml' },
-        workspace_required = true
+        capabilities = capabilities,
       }
     end,
   }
