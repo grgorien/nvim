@@ -11,6 +11,8 @@ return {
     config = function()
       require("neogit").setup({
         kind = "split",
+        disable_hint = true,
+        graph_style = "unicode"
       })
     end,
   },
