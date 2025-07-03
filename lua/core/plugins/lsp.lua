@@ -24,6 +24,9 @@ return {
       lspconfig.gopls.setup{
         capabilities = capabilities,
       }
+      lspconfig.golangci_lint_ls.setup{
+        capabilities = capabilities,
+      }
       lspconfig.html.setup{
         capabilities = capabilities,
       }
