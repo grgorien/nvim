@@ -7,8 +7,6 @@ return {
         ft = "lua", -- only load on lua files
         opts = {
           library = {
-            -- See the configuration section for more details
-            -- Load luvit types when the `vim.uv` word is found
             { path = "${3rd}/luv/library", words = { "vim%.uv" } },
           },
         },
@@ -39,7 +37,7 @@ return {
           plugins = {
             {
               name = "@vue/typescript-plugin",
-              location = "/usr/lib/node_modules/typescript-plugin",
+              location = "/home/websilkfx/.nvm/versions/node/v22.19.0/lib/node_modules/@vue/typescript-plugin",
               languages = { "javascript", "typescript", "vue" },
             }
           }
@@ -50,14 +48,20 @@ return {
           "vue"
         },
       }
+
+      lspconfig.jsonls.setup{
+        capabilities = capabilities,
+        filetypes = { "json", "jsonc" }
+      }
+
       lspconfig.ccls.setup{
         filetypes = { "c", "cpp" }
       }
       lspconfig.pyright.setup{
-        capabilities = capabilities,
+        capabilities = capabilities
       }
       lspconfig.phpactor.setup{
-        capabilities = capabilities,
+        capabilities = capabilities
       }
     end,
   }
