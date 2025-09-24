@@ -4,7 +4,7 @@ return {
     dependencies = {
       {
         "folke/lazydev.nvim",
-        ft = "lua", -- only load on lua files
+        ft = "lua",
         opts = {
           library = {
             { path = "${3rd}/luv/library", words = { "vim%.uv" } },
@@ -13,56 +13,103 @@ return {
       },
     },
     config = function()
-      local lspconfig = require('lspconfig')
-      local capabilities = require('cmp_nvim_lsp').default_capabilities()
+      -- warning/error on lspconfig framework on instance
+      local lspconfig = require("lspconfig")
+      local util = require("lspconfig.util")
+      local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
-      lspconfig.lua_ls.setup{
-        capabilities = capabilities,
+      capabilities.textDocument.completion.completionItem.snippetSupport = true
+      capabilities.textDocument.completion.completionItem.resolveSupport = {
+        properties = { "documentation", "detail", "additionalTextEdits" }
       }
-      lspconfig.gopls.setup{
+
+      local on_attach = function(client, bufnr)
+        vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
+        vim.notify(client.name .. " attached to buffer " .. bufnr, vim.log.levels.INFO)
+      end
+
+      -- shopify/cli shopify/theme(dep) -> cli integrated
+      local configs = require("lspconfig.configs")
+      if not configs.theme_check then
+        configs.theme_check = {
+          default_config = {
+            cmd = { "shopify", "theme", "language-server" },
+            filetypes = { "liquid" },
+            root_dir = util.root_pattern(".theme-check.yml", "config.yml", "shopify.theme.toml", ".git"),
+            single_file_support = true,
+            settings = {},
+          },
+        }
+      end
+
+      lspconfig.theme_check.setup({
         capabilities = capabilities,
-      }
-      lspconfig.golangci_lint_ls.setup{
+        on_attach = on_attach,
+      })
+
+      lspconfig.ts_ls.setup({
         capabilities = capabilities,
-      }
-      lspconfig.html.setup{
+        on_attach = on_attach,
+        settings = {
+          typescript = {
+            preferences = { includePackageJsonAutoImports = "off" },
+            suggest = { includeCompletionsForModuleExports = true },
+          },
+          javascript = {
+            preferences = { includePackageJsonAutoImports = "off" },
+            suggest = { includeCompletionsForModuleExports = true },
+          },
+        },
+        filetypes = { "javascript", "typescript", "vue", "liquid" },
+      })
+
+      lspconfig.html.setup({
         capabilities = capabilities,
-      }
-      lspconfig.cssls.setup{
-        capabilities = capabilities,
-      }
-      lspconfig.ts_ls.setup{
-        capabilities = capabilities,
+        on_attach = on_attach,
+        filetypes = { "html", "liquid" },
         init_options = {
-          plugins = {
-            {
-              name = "@vue/typescript-plugin",
-              location = "/home/websilkfx/.nvm/versions/node/v22.19.0/lib/node_modules/@vue/typescript-plugin",
-              languages = { "javascript", "typescript", "vue" },
-            }
-          }
+          configurationSection = { "html", "css", "javascript" },
+          embeddedLanguages = { css = true, javascript = true },
+          provideFormatter = false,
         },
-        filetypes = {
-          "javascript",
-          "typescript",
-          "vue"
-        },
-      }
+      })
 
-      lspconfig.jsonls.setup{
+      lspconfig.cssls.setup({
         capabilities = capabilities,
-        filetypes = { "json", "jsonc" }
-      }
+        on_attach = on_attach,
+        filetypes = { "css", "scss", "less", "liquid" },
+        settings = { css = { lint = { unknownAtRules = "ignore" } } },
+      })
 
-      lspconfig.ccls.setup{
-        filetypes = { "c", "cpp" }
-      }
-      lspconfig.pyright.setup{
-        capabilities = capabilities
-      }
-      lspconfig.phpactor.setup{
-        capabilities = capabilities
-      }
+      lspconfig.lua_ls.setup({
+        capabilities = capabilities,
+        on_attach = on_attach,
+        settings = {
+          Lua = {
+            diagnostics = { globals = { "vim" } },
+            workspace = { library = vim.api.nvim_get_runtime_file("", true) },
+            telemetry = { enable = false },
+          },
+        },
+      })
+
+      lspconfig.gopls.setup({ capabilities = capabilities, on_attach = on_attach })
+      lspconfig.golangci_lint_ls.setup({ capabilities = capabilities, on_attach = on_attach })
+      lspconfig.jsonls.setup({ capabilities = capabilities, on_attach = on_attach, filetypes = { "json", "jsonc" } })
+      lspconfig.ccls.setup({ capabilities = capabilities, on_attach = on_attach, filetypes = { "c", "cpp" } })
+      lspconfig.pyright.setup({ capabilities = capabilities, on_attach = on_attach })
+      lspconfig.phpactor.setup({ capabilities = capabilities, on_attach = on_attach })
+
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = "liquid",
+        callback = function()
+          vim.schedule(function()
+            vim.cmd("LspStart theme_check")
+            vim.cmd("LspStart html")
+            vim.cmd("LspStart ts_ls") -- not essential\
+          end)
+        end,
+      })
     end,
-  }
+  },
 }
