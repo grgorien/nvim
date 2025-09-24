@@ -12,12 +12,9 @@ return {
         },
       },
     },
+    -- this vim.lsp from require() -> framework issue changed
     config = function()
-      -- warning/error on lspconfig framework on instance
-      local lspconfig = require("lspconfig")
-      local util = require("lspconfig.util")
       local capabilities = require("cmp_nvim_lsp").default_capabilities()
-
       capabilities.textDocument.completion.completionItem.snippetSupport = true
       capabilities.textDocument.completion.completionItem.resolveSupport = {
         properties = { "documentation", "detail", "additionalTextEdits" }
@@ -28,28 +25,26 @@ return {
         vim.notify(client.name .. " attached to buffer " .. bufnr, vim.log.levels.INFO)
       end
 
-      -- shopify/cli shopify/theme(dep) -> cli integrated
-      local configs = require("lspconfig.configs")
-      if not configs.theme_check then
-        configs.theme_check = {
-          default_config = {
-            cmd = { "shopify", "theme", "language-server" },
-            filetypes = { "liquid" },
-            root_dir = util.root_pattern(".theme-check.yml", "config.yml", "shopify.theme.toml", ".git"),
-            single_file_support = true,
-            settings = {},
-          },
-        }
-      end
-
-      lspconfig.theme_check.setup({
+      vim.lsp.enable('shopify_theme_ls', {
+        cmd = { "shopify", "theme", "language-server" },
+        filetypes = { "liquid" },
+        root_dir = vim.fs.find({ ".shopifyignore", ".theme-check.yml", ".theme-check.yaml", "shopify.theme.toml" }, { upward = true })[1],
+        settings = {},
         capabilities = capabilities,
         on_attach = on_attach,
       })
 
-      lspconfig.ts_ls.setup({
+      vim.lsp.enable('gopls', {
+        cmd = { "gopls" },
+        filetypes = { "go", "gomod", "gowork", "gotmpl" },
+        root_dir = vim.fs.find({ "go.mod", "go.work", ".git" }, { upward = true })[1],
+        settings = {},
         capabilities = capabilities,
         on_attach = on_attach,
+      })
+
+      vim.lsp.enable('ts_ls', {
+        filetypes = { "javascript", "typescript", "vue", "liquid" },
         settings = {
           typescript = {
             preferences = { includePackageJsonAutoImports = "off" },
@@ -60,30 +55,29 @@ return {
             suggest = { includeCompletionsForModuleExports = true },
           },
         },
-        filetypes = { "javascript", "typescript", "vue", "liquid" },
-      })
-
-      lspconfig.html.setup({
         capabilities = capabilities,
         on_attach = on_attach,
+      })
+
+      vim.lsp.enable('html', {
         filetypes = { "html", "liquid" },
         init_options = {
           configurationSection = { "html", "css", "javascript" },
           embeddedLanguages = { css = true, javascript = true },
           provideFormatter = false,
         },
-      })
-
-      lspconfig.cssls.setup({
         capabilities = capabilities,
         on_attach = on_attach,
+      })
+
+      vim.lsp.enable('cssls', {
         filetypes = { "css", "scss", "less", "liquid" },
         settings = { css = { lint = { unknownAtRules = "ignore" } } },
-      })
-
-      lspconfig.lua_ls.setup({
         capabilities = capabilities,
         on_attach = on_attach,
+      })
+
+      vim.lsp.enable('lua_ls', {
         settings = {
           Lua = {
             diagnostics = { globals = { "vim" } },
@@ -91,22 +85,45 @@ return {
             telemetry = { enable = false },
           },
         },
+        capabilities = capabilities,
+        on_attach = on_attach,
       })
 
-      lspconfig.gopls.setup({ capabilities = capabilities, on_attach = on_attach })
-      lspconfig.golangci_lint_ls.setup({ capabilities = capabilities, on_attach = on_attach })
-      lspconfig.jsonls.setup({ capabilities = capabilities, on_attach = on_attach, filetypes = { "json", "jsonc" } })
-      lspconfig.ccls.setup({ capabilities = capabilities, on_attach = on_attach, filetypes = { "c", "cpp" } })
-      lspconfig.pyright.setup({ capabilities = capabilities, on_attach = on_attach })
-      lspconfig.phpactor.setup({ capabilities = capabilities, on_attach = on_attach })
+      vim.lsp.enable('golangci_lint_ls', {
+        capabilities = capabilities,
+        on_attach = on_attach,
+      })
 
+      vim.lsp.enable('jsonls', {
+        filetypes = { "json", "jsonc" },
+        capabilities = capabilities,
+        on_attach = on_attach,
+      })
+
+      vim.lsp.enable('ccls', {
+        filetypes = { "c", "cpp" },
+        capabilities = capabilities,
+        on_attach = on_attach,
+      })
+
+      vim.lsp.enable('pyright', {
+        capabilities = capabilities,
+        on_attach = on_attach,
+      })
+
+      vim.lsp.enable('phpactor', {
+        capabilities = capabilities,
+        on_attach = on_attach,
+      })
+
+      -- Automatically start LSP servers for liquid files
       vim.api.nvim_create_autocmd("FileType", {
         pattern = "liquid",
         callback = function()
           vim.schedule(function()
-            vim.cmd("LspStart theme_check")
-            vim.cmd("LspStart html")
-            vim.cmd("LspStart ts_ls") -- not essential\
+            vim.lsp.enable('shopify_theme_ls')
+            vim.lsp.enable('html')
+            vim.lsp.enable('ts_ls')
           end)
         end,
       })
