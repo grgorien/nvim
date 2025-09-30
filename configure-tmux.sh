@@ -5,7 +5,7 @@
 set -e
 
 NVIM_CONFIG_DIR="$HOME/.config/nvim"
-TMUX_CONF_SRC="$NVIM_CONFIG_DIR/tmux.conf"
+TMUX_CONF_SRC="$NVIM_CONFIG_DIR/.tmux.conf"
 TMUX_CONF_DEST="$HOME/.tmux.conf"
 TPM_DIR="$HOME/.tmux/plugins/tpm"
 
@@ -28,9 +28,9 @@ fi
 TMUX_VERSION=$(tmux -V | cut -d' ' -f2)
 echo "Found tmux version: $TMUX_VERSION"
 
-# Check if tmux.conf exists in Neovim config
+# Check if .tmux.conf exists in Neovim config
 if [ ! -f "$TMUX_CONF_SRC" ]; then
-    echo "Error: $TMUX_CONF_SRC not found. Please ensure tmux.conf is in $NVIM_CONFIG_DIR."
+    echo "Error: $TMUX_CONF_SRC not found. Please ensure .tmux.conf is in $NVIM_CONFIG_DIR."
     exit 1
 fi
 
