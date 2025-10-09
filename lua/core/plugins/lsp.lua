@@ -23,7 +23,6 @@ return {
         "lua_ls",
         "jsonls",
         "ccls",
-        "pyright",
         "phpactor",
         "shopify_theme_ls",
       }
