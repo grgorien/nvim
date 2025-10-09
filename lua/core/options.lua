@@ -1,8 +1,8 @@
 vim.opt.guicursor = ""
 vim.opt.nu = true
 vim.opt.relativenumber = true
-
-vim.opt.laststatus = 2
+-- views can only be fully collapsed with the global statusline
+vim.opt.laststatus = 3
 vim.opt.autowrite = true
 vim.opt.cursorline = true
 vim.opt.autoread = true
