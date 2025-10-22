@@ -25,7 +25,9 @@ return {
         "ccls",
         "phpactor",
         "shopify_theme_ls",
-        "basedpyright"
+        "basedpyright",
+        "tailwindcss",
+        "vue_ls"
       }
 
       for _, server in ipairs(servers) do
