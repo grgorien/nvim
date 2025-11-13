@@ -27,7 +27,8 @@ return {
         "shopify_theme_ls",
         "basedpyright",
         "tailwindcss",
-        "vue_ls"
+        "vue_ls",
+        "postgres_lsp",
       }
 
       for _, server in ipairs(servers) do
