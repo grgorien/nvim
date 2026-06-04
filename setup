@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+NVIM_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+SOURCE_T="$NVIM_DIR/t"
+TARGET_T="$HOME/.local/bin/t"
+
+SOURCE_TMUX="$NVIM_DIR/.tmux.conf"
+TARGET_TMUX="$HOME/.tmux.conf"
+
+echo "Using config directory: $NVIM_DIR"
+
+mkdir -p "$HOME/.local/bin"
+
+link_if_missing() {
+  local source="$1"
+  local target="$2"
+
+  if [ ! -e "$source" ]; then
+    echo "Missing source file: $source"
+    return 1
+  fi
+
+  if [ -L "$target" ]; then
+    echo "Already linked: $target -> $(readlink "$target")"
+    return 0
+  fi
+
+  if [ -e "$target" ]; then
+    echo "Exists, not touching: $target"
+    echo "Move it first if you want this script to manage it:"
+    echo "  mv '$target' '${target}.backup'"
+    return 0
+  fi
+
+  ln -s "$source" "$target"
+  echo "Linked: $target -> $source"
+}
+
+link_if_missing "$SOURCE_T" "$TARGET_T"
+link_if_missing "$SOURCE_TMUX" "$TARGET_TMUX"
+
+chmod +x "$SOURCE_T"
+
+echo
+echo "Done."
+echo "Check:"
+echo "  ls -l ~/.local/bin/t"
+echo "  ls -l ~/.tmux.conf"
