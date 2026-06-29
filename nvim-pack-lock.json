@@ -1,0 +1,20 @@
+{
+  "plugins": {
+    "dired": {
+      "rev": "7cf5ceb69a6bbea547f97397fa5310b1571eb03a",
+      "src": "https://github.com/X3eRo0/dired.nvim"
+    },
+    "gruber": {
+      "rev": "aba065c3a79b58cc3863d5c9db319255abd1258a",
+      "src": "https://github.com/blazkowolf/gruber-darker.nvim"
+    },
+    "nui": {
+      "rev": "de740991c12411b663994b2860f1a4fd0937c130",
+      "src": "https://github.com/MunifTanjim/nui.nvim"
+    },
+    "nui.nvim": {
+      "rev": "de740991c12411b663994b2860f1a4fd0937c130",
+      "src": "https://github.com/MunifTanjim/nui.nvim"
+    }
+  }
+}
