@@ -14,42 +14,43 @@ vim.opt.hlsearch = true
 vim.opt.incsearch = true
 vim.opt.clipboard = "unnamedplus"
 
-local map = vim.keymap.set
-map("n", "<leader>w", "<cmd>w<CR>")
-map("n", "<leader>q", "<cmd>q<CR>")
-map("n", "<leader><Esc>", "<cmd>Dired<CR>", { desc = "dired fs active" })
+vim.api.nvim_create_autocmd({ "BufEnter", "TermEnter", "TermLeave" }, {
+    desc = "cd into term:// on enter cwd",
+    pattern = "term://*",
+    callback = function()
+        local cwd = vim.fn.resolve("/proc/" .. vim.b.terminal_job_pid .. "/cwd")
+        if vim.fn.isdirectory(cwd) == 0 then return end
+        vim.fn.chdir(cwd)
+    end,
+})
 
-vim.pack.add({
-	{ src = "https://github.com/MunifTanjim/nui.nvim", name = "nui" },
-	{ src = "https://github.com/X3eRo0/dired.nvim", name = "dired" },
-	{ src = "https://github.com/blazkowolf/gruber-darker.nvim", name = "gruber" },
-
+vim.api.nvim_create_autocmd({ "TermRequest" },{
+    desc = "handles osc 7 dir change req",
+    callback = function(ev)
+        local pwd, n = string.gsub(ev.data.sequence, "\027]7;file://[^/]*", "")
+        if n <= 0 then return end
+        if vim.fn.isdirectory(pwd) == 0 then return end
+        if vim.api.nvim_get_current_buf() ~= ev.buf then return end
+        vim.cmd.cd(pwd)
+    end
 })
 
 
-require("dired").setup({
-	path_separator = "/",
-	show_banner = false,
-	show_icons = false,
-	show_hidden = true,
-	show_dot_dirs = true,
-	show_colors = true,
+local map = vim.keymap.set
+map("n", "<leader>w", "<cmd>w<CR>")
+map("n", "<leader>q", "<cmd>q<CR>")
+map("t", "<esc><esc>", "<C-\\><C-n>")
 
-	keybinds = {
-		dired_enter = "<CR>",
-		dired_back = "-",
-		dired_up = "_",
-		dired_rename = "R",
-		dired_quit = "q",
-	},
+vim.pack.add({
+    { src = "https://github.com/blazkowolf/gruber-darker.nvim", name = "gruber" },
 })
 
 vim.cmd.colorscheme("gruber-darker")
 require("gruber-darker").setup({
-	opts = {
-		bold = false,
-		italic = {
-			strings = false,
-		},
-	}
+    opts = {
+        bold = false,
+        italic = {
+            strings = false,
+        },
+    }
 })
