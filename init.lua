@@ -14,13 +14,49 @@ vim.opt.hlsearch = true
 vim.opt.incsearch = true
 vim.opt.clipboard = "unnamedplus"
 
+vim.filetype.add({
+    extension = {
+        tmpl = "gotmpl.html",
+    },
+})
+
 vim.api.nvim_create_autocmd({ "BufEnter", "TermEnter", "TermLeave" }, {
     desc = "cd into term:// on enter cwd",
     pattern = "term://*",
     callback = function()
-        local cwd = vim.fn.resolve("/proc/" .. vim.b.terminal_job_pid .. "/cwd")
+       local cwd = vim.fn.resolve("/proc/" .. vim.b.terminal_job_pid .. "/cwd")
         if vim.fn.isdirectory(cwd) == 0 then return end
         vim.fn.chdir(cwd)
+    end,
+})
+
+vim.lsp.config("gopls", {
+    cmd = { "gopls" },
+    filetypes = { "go", "gomod" },
+    root_markers = { "go.mod", ".git" },
+    settings = {
+        gopls = {
+            hints = {
+                parameterNames = true,
+                assignVariables = true,
+                constantValues = true,
+                rangeVariableTypes = true,
+                compositeLiteralFields = true,
+                functionTypeParameters = true,
+            },
+        },
+    },
+})
+vim.lsp.enable("gopls")
+
+vim.api.nvim_create_autocmd("LspAttach", {
+    callback = function(args)
+        local bufnr = args.buf
+        -- inline type/param hints — aware of functions around 
+        vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
+        -- manual signature help while typing args — no popup unless you ask
+        vim.keymap.set("i", "<C-k>", vim.lsp.buf.signature_help, { buffer = bufnr })
+
     end,
 })
 
