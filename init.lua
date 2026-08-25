@@ -16,7 +16,8 @@ vim.opt.clipboard = "unnamedplus"
 
 vim.filetype.add({
     extension = {
-        tmpl = "gotmpl.html",
+        tmpl = "gotmpl",
+        templ = "templ"
     },
 })
 
@@ -32,10 +33,11 @@ vim.api.nvim_create_autocmd({ "BufEnter", "TermEnter", "TermLeave" }, {
 
 vim.lsp.config("gopls", {
     cmd = { "gopls" },
-    filetypes = { "go", "gomod" },
-    root_markers = { "go.mod", ".git" },
+    filetypes = { "go", "gomod", "gowork", "gotmpl" },
+    root_markers = { "go.work", "go.mod", ".git" },
     settings = {
         gopls = {
+            ["build.templateExtensions"] = { "tmpl", "gotmpl" },
             hints = {
                 parameterNames = true,
                 assignVariables = true,
@@ -48,6 +50,13 @@ vim.lsp.config("gopls", {
     },
 })
 vim.lsp.enable("gopls")
+
+vim.lsp.config("templ", {
+    cmd = { "templ", "lsp" },
+    filetypes = { "templ" },
+    root_markers = { "go.mod", ".git" },
+})
+vim.lsp.enable("templ")
 
 vim.api.nvim_create_autocmd("LspAttach", {
     callback = function(args)
@@ -90,3 +99,11 @@ require("gruber-darker").setup({
         },
     }
 })
+
+-- Visual mode: move selection up/down with J/K
+vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", { silent = true, desc = "Move selection down" })
+vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", { silent = true, desc = "Move selection up" })
+
+-- Normal mode: move single line with <leader>j/<leader>k (no modifier, no dwm/terminal conflict)
+vim.keymap.set("n", "<leader>j", ":m .+1<CR>==", { silent = true, desc = "Move line down" })
+vim.keymap.set("n", "<leader>k", ":m .-2<CR>==", { silent = true, desc = "Move line up" })
