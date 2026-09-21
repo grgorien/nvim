@@ -1,0 +1,12 @@
+{
+  "plugins": {
+    "fzf-lua": {
+      "rev": "02bc882f208f3481aa959dbbee8ce5edad2fd8b2",
+      "src": "https://github.com/ibhagwan/fzf-lua"
+    },
+    "gruber": {
+      "rev": "83d99c0eb0fa2513fa5268d097194801fad26660",
+      "src": "https://github.com/blazkowolf/gruber-darker.nvim"
+    }
+  }
+}
