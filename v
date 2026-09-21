@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# v - neovim session manager / lightweight multiplexer replacement
+## v - neovim session manager / lightweight multiplexer replacement
 set -euo pipefail
 
 required_tools=(nvim pstree realpath fzf ss git find column)
@@ -15,22 +15,17 @@ fi
 SOCK_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/v/sockets"
 mkdir -p "$SOCK_DIR"
 
-# Where to look for "not yet open" projects when jumping. Edit to taste.
-PROJECT_ROOTS=("$HOME/code" "$HOME/projects" "$HOME/dev")
+# define your places
+PROJECT_ROOTS=("$HOME/.wrk" "$HOME/.config" "$HOME/.x")
 PROJECT_DEPTH=3
 
-# ---- helpers -----------------------------------------------------------
-
-# all live nvim server sockets, found by process name (not by path,
-# so custom --listen names still work)
+# helpers (7)
 live_sockets() {
     ss -xlp 2>/dev/null | awk '$0 ~ /"nvim"/ { print $5 }' | while IFS= read -r s; do
         [ -S "$s" ] && printf '%s\n' "$s"
     done
 }
 
-# name for a socket: filename minus .sock if it lives in our SOCK_DIR,
-# otherwise fall back to the raw socket basename
 sock_name() {
     local sock=$1 base
     base=$(basename -- "$sock")
@@ -40,25 +35,17 @@ sock_name() {
     esac
 }
 
-sock_cwd() {
-    nvim --server "$1" --remote-expr 'getcwd()' 2>/dev/null
-}
+sock_cwd()  { nvim --server "$1" --remote-expr 'getcwd()' 2>/dev/null; }
+sock_pid()  { nvim --server "$1" --remote-expr 'getpid()' 2>/dev/null; }
 
-sock_pid() {
-    nvim --server "$1" --remote-expr 'getpid()' 2>/dev/null
-}
-
-# listening tcp ports owned by any descendant of a given pid
 sock_ports() {
     local pid=$1 pids
     pids=$(pstree -p "$pid" 2>/dev/null | grep -oP '\(\K[0-9]+(?=\))') || true
     [ -z "$pids" ] && return
-    # shellcheck disable=SC2086
     ss -ltnp 2>/dev/null | grep -F -f <(printf 'pid=%s,\n' $pids) 2>/dev/null \
         | awk '{print $4}' | awk -F: '{print $NF}' | sort -un | paste -sd, -
 }
 
-# project name for a directory: git repo name if inside one, else basename
 project_name() {
     local dir=$1 root
     root=$(git -C "$dir" rev-parse --show-toplevel 2>/dev/null) || true
@@ -67,8 +54,7 @@ project_name() {
 
 sanitize() { tr -c 'A-Za-z0-9_.-' '_' <<< "$1"; }
 
-# ---- socket-derived listing ---------------------------------------------
-
+# listing lines 
 list_line() {
     local sock=$1 cwd name pid ports
     cwd=$(sock_cwd "$sock") || return 0
@@ -80,9 +66,7 @@ list_line() {
 }
 
 if [[ "${1:-}" =~ ^-l$|^--list$ ]]; then
-    live_sockets | while IFS= read -r sock; do
-        list_line "$sock"
-    done | column -t -s $'\t'
+    live_sockets | while IFS= read -r sock; do list_line "$sock"; done | column -t -s $'\t'
     exit
 fi
 
@@ -94,8 +78,7 @@ if [[ "${1:-}" =~ ^-k$|^--kill$ ]]; then
     exit
 fi
 
-# ---- unified jump: live sessions + not-yet-open projects ---------------
-
+# jumping
 if [[ "${1:-}" =~ ^-j$|^--jump$ ]]; then
     live=$(live_sockets | while IFS= read -r s; do list_line "$s"; done)
     live_cwds=$(printf '%s\n' "$live" | cut -f4)
@@ -130,11 +113,21 @@ if [[ "${1:-}" =~ ^-j$|^--jump$ ]]; then
     exit
 fi
 
-# ---- named session creation ---------------------------------------------
+# load: open session with a file glob pre-loaded 
+# v --load '*.go' [-n name] [dir]
+# useful for switching language context: v --load '**/*.c' -n theme ~/code/proj
 
+load_pattern=""
+if [[ "${1:-}" =~ ^--load$ ]]; then
+    load_pattern="${2:-}"
+    [ -n "$load_pattern" ] || { echo "$0: error: --load requires a pattern" >&2; exit 1; }
+    shift 2
+fi
+
+# named session
 name=""
 if [[ "${1:-}" =~ ^-n$|^--name$ ]]; then
-    name=${2:-}
+    name="${2:-}"
     [ -n "$name" ] || { echo "$0: error: --name requires a value" >&2; exit 1; }
     shift 2
 fi
@@ -145,9 +138,6 @@ if [[ "${1:-}" =~ ^-a$|^--attach$ ]]; then
     shift
 fi
 
-# a single directory argument only makes sense as "start the session here",
-# never as a file to edit (that's what triggers netrw). Peel it off before
-# the file-args guard below, but only when we're creating a new session.
 start_dir=""
 if [ "$attach" != "true" ] && [ "$#" -eq 1 ] && [ -d "$1" ]; then
     start_dir=$1
@@ -161,10 +151,10 @@ for arg in "$@"; do
     fi
 done
 
+# already inside nvim: send files or do nothing
 if pstree -s $$ | grep -q nvim; then
     if [ "$attach" = "true" ]; then
-        echo "$0: error: cannot attach: already inside neovim" >&2
-        exit 1
+        echo "$0: error: cannot attach: already inside neovim" >&2; exit 1
     fi
     if [ "$#" -ne 0 ]; then
         realpath --zero "$@" | xargs -0 -n1 nvim --server "$NVIM" --remote
@@ -172,6 +162,7 @@ if pstree -s $$ | grep -q nvim; then
     exit
 fi
 
+# create new session
 if [ "$attach" != "true" ]; then
     listen_args=()
     if [ -n "$name" ]; then
@@ -179,10 +170,17 @@ if [ "$attach" != "true" ]; then
         [ -S "$sock" ] && { echo "$0: error: session '$name' already exists ($sock)" >&2; exit 1; }
         listen_args=(--listen "$sock")
     fi
-    if [ -n "$start_dir" ]; then
-        cd "$start_dir" || exit 1
-    fi
-    if [ "$#" -eq 0 ]; then
+
+    [ -n "$start_dir" ] && { cd "$start_dir" || exit 1; }
+
+    if [ -n "$load_pattern" ]; then
+        # expand glob relative to cwd (after optional cd above)
+        mapfile -t load_files < <(find . -type f -not -path '*/.git/*' -name "$load_pattern" 2>/dev/null | head -40)
+        if [ "${#load_files[@]}" -eq 0 ]; then
+            echo "$0: warning: no files matched '$load_pattern'" >&2
+        fi
+        nvim "${listen_args[@]}" "${load_files[@]}" --startuptime /tmp/nvimstartup
+    elif [ "$#" -eq 0 ]; then
         nvim "${listen_args[@]}" +terminal --startuptime /tmp/nvimstartup
     else
         nvim "${listen_args[@]}" "$@" --startuptime /tmp/nvimstartup
@@ -190,9 +188,10 @@ if [ "$attach" != "true" ]; then
     exit
 fi
 
-# --attach with no --name: fall back to picking any live socket
+# attach: pick from live sockets
 sockets=$(live_sockets)
 [ -n "$sockets" ] || { echo "$0: error: no neovim sockets found" >&2; exit 1; }
+
 entries=""
 while IFS= read -r sock; do
     cwd=$(sock_cwd "$sock") || continue
