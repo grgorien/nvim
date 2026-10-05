@@ -81,6 +81,7 @@ vim.api.nvim_create_autocmd({ "TermRequest" }, {
 vim.pack.add({
     { src = "https://github.com/blazkowolf/gruber-darker.nvim", name = "gruber" },
     { src = "https://github.com/ibhagwan/fzf-lua",              name = "fzf-lua" },
+    { src = "https://github.com/christoomey/vim-tmux-navigator", name = "vim-tmux-navigator" },
 })
 
 vim.cmd.colorscheme("gruber-darker")
@@ -106,7 +107,15 @@ local map = vim.keymap.set
 map("n", "<leader>w", "<cmd>w<CR>")
 map("n", "<leader>q", "<cmd>q<CR>")
 map("t", "<esc><esc>", "<C-\\><C-n>")
-
+-- splits
+map("n", "<leader>|", "<cmd>vsplit<CR>", { desc = "vsplit" })
+map("n", "<leader>-", "<cmd>split<CR>",  { desc = "split" })
+-- resizing splits
+map("n", "<leader>H", "<cmd>vertical resize -5<CR>", { desc = "narrower" })
+map("n", "<leader>L", "<cmd>vertical resize +5<CR>", { desc = "wider" })
+map("n", "<leader>J", "<cmd>resize -5<CR>",          { desc = "shorter" })
+map("n", "<leader>K", "<cmd>resize +5<CR>",          { desc = "taller" })
+map("n", "<leader>=", "<C-w>=",                      { desc = "equalize splits" })
 -- navigation
 map("n", "<leader>f",  fzf.files,                   { desc = "files" })
 map("n", "<leader>b",  fzf.buffers,                  { desc = "buffers" })
