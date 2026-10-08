@@ -52,7 +52,8 @@ project_name() {
     basename -- "${root:-$dir}"
 }
 
-sanitize() { tr -c 'A-Za-z0-9_.-' '_' <<< "$1"; }
+# no here-string (rm trailing '_')
+sanitize() { printf '%s' "${1//[^A-Za-z0-9_.-]/_}"; }
 
 # listing lines 
 list_line() {
@@ -70,11 +71,16 @@ if [[ "${1:-}" =~ ^-l$|^--list$ ]]; then
     exit
 fi
 
+# multi-select (tab to mark) and kill by pid instead of --remote-send,
+# which typed keys into the terminal buffer when nvim was in terminal mode
 if [[ "${1:-}" =~ ^-k$|^--kill$ ]]; then
-    sock=$(live_sockets | while IFS= read -r s; do list_line "$s"; done \
-        | fzf --delimiter='\t' --with-nth=2,3,4 | cut -f5)
-    [ -S "$sock" ] || { echo "$0: error: nothing selected" >&2; exit 1; }
-    nvim --server "$sock" --remote-send '<Esc>:qa!<CR>'
+    socks=$(live_sockets | while IFS= read -r s; do list_line "$s"; done \
+        | fzf -m --delimiter='\t' --with-nth=2,3,4 | cut -f5) || true
+    [ -n "$socks" ] || { echo "$0: error: nothing selected" >&2; exit 1; }
+    while IFS= read -r sock; do
+        pid=$(sock_pid "$sock") || continue
+        [ -n "$pid" ] && kill "$pid"
+    done <<< "$socks"
     exit
 fi
 
