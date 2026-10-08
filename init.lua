@@ -58,11 +58,21 @@ vim.lsp.config("templ", {
 })
 vim.lsp.enable("templ")
 
+vim.o.completeopt = "menu,menuone,noselect,fuzzy,popup"
 vim.api.nvim_create_autocmd("LspAttach", {
     callback = function(args)
         local bufnr = args.buf
         vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
         vim.keymap.set("i", "<C-k>", vim.lsp.buf.signature_help, { buffer = bufnr })
+    end,
+})
+
+vim.api.nvim_create_autocmd('LspAttach', {
+    callback = function(ev)
+        local c = vim.lsp.get_client_by_id(ev.data.client_id)
+        if c and c:supports_method('textDocument/completion') then
+            vim.lsp.completion.enable(true, c.id, ev.buf, { autotrigger = true })
+        end
     end,
 })
 
@@ -90,6 +100,16 @@ require("gruber-darker").setup({
         bold = false,
         italic = { strings = false },
     }
+})
+
+require('ai').setup({
+    keys = {
+        copilot_next   = '<C-]>',
+        copilot_prev   = false,        
+        copilot_toggle = '<leader>ac',
+        fim_toggle     = '<leader>af',
+        check          = '<leader>ai',
+    },
 })
 
 -- fzf-lua: no setup() needed for defaults, just pull the module
