@@ -154,6 +154,9 @@ map("n", "<leader>x", function()
     if #listed > 1 then vim.cmd("bprev") end
     vim.cmd("bdelete #")
 end, { desc = "close buf" })
+-- detach ui, leave the session (and its terminal jobs) running
+map("n", "<leader>d", "<cmd>detach<cr>", { desc = "detach ui" })
+map("t", "<C-\\><C-d>", "<cmd>detach<cr>", { desc = "detach ui" })
 
 -- visual line move
 map("v", "J", ":m '>+1<CR>gv=gv", { silent = true, desc = "move sel down" })
