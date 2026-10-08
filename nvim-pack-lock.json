@@ -7,6 +7,18 @@
     "gruber": {
       "rev": "83d99c0eb0fa2513fa5268d097194801fad26660",
       "src": "https://github.com/blazkowolf/gruber-darker.nvim"
+    },
+    "llama.vim": {
+      "rev": "e1ca1cc6af9da73f4ae21f810f33909d515592e6",
+      "src": "https://github.com/ggml-org/llama.vim"
+    },
+    "nvim-lspconfig": {
+      "rev": "910f0c4d46aa186641518395bc7e6fffb4d23baf",
+      "src": "https://github.com/neovim/nvim-lspconfig"
+    },
+    "vim-tmux-navigator": {
+      "rev": "e41c431a0c7b7388ae7ba341f01a0d217eb3a432",
+      "src": "https://github.com/christoomey/vim-tmux-navigator"
     }
   }
 }
