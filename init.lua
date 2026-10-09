@@ -127,6 +127,7 @@ local map = vim.keymap.set
 map("n", "<leader>w", "<cmd>w<CR>")
 map("n", "<leader>q", "<cmd>q<CR>")
 map("t", "<esc><esc>", "<C-\\><C-n>")
+map("n", "<leader><Esc>", "<cmd>nohlsearch<CR>")
 -- splits
 map("n", "<leader>|", "<cmd>vsplit<CR>", { desc = "vsplit" })
 map("n", "<leader>-", "<cmd>split<CR>",  { desc = "split" })
