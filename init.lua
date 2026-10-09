@@ -17,8 +17,15 @@ vim.opt.clipboard = "unnamedplus"
 vim.filetype.add({
     extension = {
         tmpl = "gotmpl",
-        templ = "templ"
+        templ = "templ",
     },
+})
+
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = "templ",
+    callback = function()
+        vim.treesitter.start()
+    end,
 })
 
 vim.api.nvim_create_autocmd({ "BufEnter", "TermEnter", "TermLeave" }, {
@@ -49,11 +56,12 @@ vim.lsp.config("gopls", {
         },
     },
 })
+
 vim.lsp.enable("gopls")
 
 vim.lsp.config("templ", {
     cmd = { "templ", "lsp" },
-    filetypes = { "templ" },
+   filetypes = { "templ" },
     root_markers = { "go.mod", ".git" },
 })
 vim.lsp.enable("templ")
@@ -92,7 +100,11 @@ vim.pack.add({
     { src = "https://github.com/blazkowolf/gruber-darker.nvim", name = "gruber" },
     { src = "https://github.com/ibhagwan/fzf-lua",              name = "fzf-lua" },
     { src = "https://github.com/christoomey/vim-tmux-navigator", name = "vim-tmux-navigator" },
+    { src = "https://github.com/romus204/tree-sitter-manager.nvim" },
+
 })
+
+require("tree-sitter-manager").setup()
 
 vim.cmd.colorscheme("gruber-darker")
 require("gruber-darker").setup({
