@@ -108,6 +108,15 @@ vim.api.nvim_create_autocmd('LspAttach', {
     end,
 })
 
+-- Show diagnostics in a floating window on hover
+vim.o.updatetime = 250
+vim.api.nvim_create_autocmd("CursorHold", {
+    buffer = 0,
+    callback = function()
+        vim.diagnostic.open_float(nil, { focusable = false })
+    end,
+})
+
 vim.api.nvim_create_autocmd({ "TermRequest" }, {
     desc = "handles osc 7 dir change req",
     callback = function(ev)
@@ -161,9 +170,24 @@ fzf.setup({
 -- keymaps
 local map = vim.keymap.set
 map("n", "<leader>w", "<cmd>w<CR>")
-map("n", "<leader>q", "<cmd>q<CR>")
+--map("n", "<leader>q", "<cmd>q<CR>") just dont quit (v)
 map("t", "<esc><esc>", "<C-\\><C-n>")
 map("n", "<leader><Esc>", "<cmd>nohlsearch<CR>")
+-- errors diag
+map("n", "<C-a>", function() vim.diagnostic.open_float() end, { desc = "Show me line diagnostics" })
+map("n", "<C-q>", function() vim.diagnostic.setloclist() end, { desc = "Show me quick fix list" })
+vim.diagnostic.config({
+    virtual_text = {
+        prefix = "|E|:", 
+        source = "if_many",
+    },
+    signs = true,
+    underline = true,
+    update_in_insert = false, -- Don't annoy you while actively typing
+    severity_sort = true,
+})
+-- lazy git
+map("n", "<leader>lg", "<cmd>LazyGit<CR>", { desc = "open lazygit"} )
 -- splits
 map("n", "<leader>|", "<cmd>vsplit<CR>", { desc = "vsplit" })
 map("n", "<leader>-", "<cmd>split<CR>",  { desc = "split" })
